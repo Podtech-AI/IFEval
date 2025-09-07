@@ -1,19 +1,18 @@
 # coding=utf-8
 # Copyright 2025 The Google Research Authors.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Apache License, Version 2.0（「ライセンス」）に基づいてライセンスされています。
+# このファイルは、ライセンスに準拠していない限り使用できません。
+# ライセンスのコピーは以下で入手できます：
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# 適用法で要求されるか、書面で合意されない限り、ライセンスに基づいて
+# 配布されるソフトウェアは「現状のまま」で配布され、
+# 明示的または黙示的を問わず、いかなる保証も条件もありません。
+# 詳細については、ライセンスを参照してください。
 
-"""Binary of evaluating instruction following. See README.md."""
+"""指示追従評価のバイナリ。README.mdを参照してください。"""
 
 import os
 from typing import Sequence
@@ -26,30 +25,30 @@ from instruction_following_eval import evaluation_lib
 
 
 _INPUT_DATA = flags.DEFINE_string(
-    "input_data", None, "path to input data", required=True
+    "input_data", None, "入力データへのパス", required=True
 )
 
 _INPUT_RESPONSE_DATA = flags.DEFINE_string(
-    "input_response_data", None, "path to input response data", required=False
+    "input_response_data", None, "入力応答データへのパス", required=False
 )
 
 _OUTPUT_DIR = flags.DEFINE_string(
     "output_dir",
     None,
-    "Output directory for inference and eval results.",
+    "推論と評価結果の出力ディレクトリ。",
     required=True,
 )
 
 
 def main(argv):
   if len(argv) > 1:
-    raise app.UsageError("Too many command-line arguments.")
+    raise app.UsageError("コマンドライン引数が多すぎます。")
 
   inputs = evaluation_lib.read_prompt_list(_INPUT_DATA.value)
   prompt_to_response = evaluation_lib.read_prompt_to_response_dict(
       _INPUT_RESPONSE_DATA.value)
 
-  # get instruction following results
+  # 指示追従の結果を取得
   for func, output_file_name in [
       (evaluation_lib.test_instruction_following_strict, "eval_results_strict"),
       (evaluation_lib.test_instruction_following_loose, "eval_results_loose"),
@@ -68,7 +67,7 @@ def main(argv):
     evaluation_lib.write_outputs(output_file_name, outputs)
     logging.info("Generated: %s", output_file_name)
 
-    # Prints instruction following accuracy report.
+    # 指示追従精度レポートを出力します。
     print("=" * 64)
     print(f"{output_file_name} Accuracy Scores:")
     evaluation_lib.print_report(outputs)

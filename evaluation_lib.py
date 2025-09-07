@@ -1,23 +1,23 @@
 # coding=utf-8
 # Copyright 2025 The Google Research Authors.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Apache License, Version 2.0（「ライセンス」）に基づいてライセンスされています。
+# このファイルは、ライセンスに準拠していない限り使用できません。
+# ライセンスのコピーは以下で入手できます：
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# 適用法で要求されるか、書面で合意されない限り、ライセンスに基づいて
+# 配布されるソフトウェアは「現状のまま」で配布され、
+# 明示的または黙示的を問わず、いかなる保証も条件もありません。
+# 詳細については、ライセンスを参照してください。
 
-"""Binary of evaluating instruction following. See README.md."""
+"""指示追従評価のバイナリ。README.mdを参照してください。"""
 
 import collections
 import dataclasses
 import json
+import re
 from typing import Dict, Optional, Sequence, Union
 
 from instruction_following_eval import instructions_registry
@@ -41,7 +41,7 @@ class OutputExample:
 
 
 def read_prompt_list(input_jsonl_filename):
-  """Read inputs from jsonl."""
+  """jsonlから入力を読み込みます。"""
   inputs = []
   with open(input_jsonl_filename, "r") as f:
     for l in f:
@@ -55,7 +55,7 @@ def read_prompt_list(input_jsonl_filename):
 
 
 def write_outputs(output_jsonl_filename, outputs):
-  """Writes outputs to jsonl."""
+  """出力をjsonlに書き込みます。"""
   assert outputs
   with open(output_jsonl_filename, "w") as f:
     for o in outputs:
@@ -76,7 +76,7 @@ def test_instruction_following_strict(
     inp,
     prompt_to_response,
 ):
-  """Tests response to see if instrutions are followed."""
+  """指示に従っているかどうかを確認するために応答をテストします。"""
   response = prompt_to_response[inp.prompt]
   instruction_list = inp.instruction_id_list
   is_following_list = []
@@ -108,7 +108,7 @@ def test_instruction_following_loose(
     inp,
     prompt_to_response,
 ):
-  """Tests response for an upper bound for following instructions."""
+  """指示に従うための上限について応答をテストします。"""
   response = prompt_to_response[inp.prompt]
   r = response.split("\n")
   response_remove_first = "\n".join(r[1:]).strip()
@@ -158,7 +158,7 @@ def test_instruction_following_loose(
 
 
 def read_prompt_to_response_dict(input_jsonl_filename):
-  """Creates dictionary matching prompt and response."""
+  """プロンプトと応答を対応付ける辞書を作成します。"""
   return_dict = {}
   with open(input_jsonl_filename, "r") as f:
     for l in f:
@@ -168,7 +168,7 @@ def read_prompt_to_response_dict(input_jsonl_filename):
 
 
 def print_report(outputs):
-  """Prints a report on accuracy scores."""
+  """精度スコアのレポートを出力します。"""
 
   prompt_total = 0
   prompt_correct = 0

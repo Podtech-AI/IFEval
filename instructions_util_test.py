@@ -1,19 +1,18 @@
 # coding=utf-8
 # Copyright 2025 The Google Research Authors.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Apache License, Version 2.0（「ライセンス」）に基づいてライセンスされています。
+# ライセンスに準拠する場合を除き、このファイルを使用することはできません。
+# ライセンスのコピーは以下で入手できます：
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# 適用される法律で必要とされるか書面で合意されない限り、ソフトウェアは
+# 「現状のまま」ライセンスの下で配布され、明示または黙示を問わず、
+# いかなる種類の保証や条件もありません。
+# ライセンスの下での権限と制限については、ライセンスを参照してください。
 
-"""Test for utility library of instructions."""
+"""指示のユーティリティライブラリのテスト。"""
 
 from absl.testing import absltest
 from absl.testing import parameterized
@@ -36,7 +35,7 @@ class InstructionsUtilTest(parameterized.TestCase):
       """, 6)
 
   def test_word_count(self):
-    """Tests word counter."""
+    """単語カウンターをテストする。"""
     with self.subTest(f"{self.TEST_WORD_COUNT_CASE_1[0]}"):
       text, expected_num_words = self.TEST_WORD_COUNT_CASE_1
       actual_num_words = instructions_util.count_words(text)
@@ -54,7 +53,7 @@ class InstructionsUtilTest(parameterized.TestCase):
 
   @parameterized.named_parameters(
       [
-          {  # pylint: disable=g-complex-comprehension
+          {  # pylint: disable=g-complex-comprehension（複雑な内包表記を無効化）
               "testcase_name": (
                   f"_response={response}_num_sentences={num_sentences}"
               ),
@@ -70,7 +69,7 @@ class InstructionsUtilTest(parameterized.TestCase):
       ]
   )
   def test_count_sentences(self, response, num_sentences):
-    """Tests sentence counter."""
+    """文のカウンターをテストする。"""
     actual_num_sentences = instructions_util.count_sentences(response)
     self.assertEqual(num_sentences, actual_num_sentences)
 
@@ -103,7 +102,7 @@ sharing the research that they have done.
   ]
 
   def test_sentence_splitter(self):
-    """Tests sentence splitter."""
+    """文の分割器をテストする。"""
     sentence_split_1 = instructions_util.split_into_sentences(
         self.TEST_SENTENCE_SPLIT_1
     )
@@ -115,7 +114,7 @@ sharing the research that they have done.
     self.assertEqual(self.EXPECTED_SENTENCE_SPLIT_2, sentence_split_2)
 
   def test_generate_keywords(self):
-    """Tests generate keywords."""
+    """キーワード生成機能をテストする。"""
     self.assertLen(instructions_util.generate_keywords(10), 10)
 
 

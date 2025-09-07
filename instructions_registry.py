@@ -1,19 +1,18 @@
 # coding=utf-8
 # Copyright 2025 The Google Research Authors.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Apache License, Version 2.0（「ライセンス」）に基づいてライセンスされています。
+# このファイルは、ライセンスに準拠していない限り使用できません。
+# ライセンスのコピーは以下で入手できます：
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# 適用法で要求されるか、書面で合意されない限り、ライセンスに基づいて
+# 配布されるソフトウェアは「現状のまま」で配布され、
+# 明示的または黙示的を問わず、いかなる保証も条件もありません。
+# 詳細については、ライセンスを参照してください。
 
-"""Registry of all instructions."""
+"""すべての指示のレジストリ。"""
 from instruction_following_eval import instructions
 
 _KEYWORD = "keywords:"
@@ -39,7 +38,7 @@ _PUNCTUATION = "punctuation:"
 INSTRUCTION_DICT = {
     _KEYWORD + "existence": instructions.KeywordChecker,
     _KEYWORD + "frequency": instructions.KeywordFrequencyChecker,
-    # TODO(jeffreyzhou): make a proper set of sentences to choose from
+    # TODO(jeffreyzhou): 選択するための適切な文のセットを作成する
     # _KEYWORD + "key_sentences": instructions.KeySentenceChecker,
     _KEYWORD + "forbidden_words": instructions.ForbiddenWords,
     _KEYWORD + "letter_frequency": instructions.LetterFrequencyChecker,
@@ -51,17 +50,17 @@ INSTRUCTION_DICT = {
     _CONTENT + "number_placeholders": instructions.PlaceholderChecker,
     _CONTENT + "postscript": instructions.PostscriptChecker,
     _FORMAT + "number_bullet_lists": instructions.BulletListChecker,
-    # TODO(jeffreyzhou): Pre-create paragraph or use prompt to replace
+    # TODO(jeffreyzhou): 段落を事前作成するか、プロンプトを使用して置き換える
     # _CONTENT + "rephrase_paragraph": instructions.RephraseParagraph,
     _FORMAT + "constrained_response": instructions.ConstrainedResponseChecker,
     _FORMAT + "number_highlighted_sections": (
         instructions.HighlightSectionChecker),
     _FORMAT + "multiple_sections": instructions.SectionChecker,
-    # TODO(tianjianlu): Re-enable rephrasing with preprocessing the message.
+    # TODO(tianjianlu): メッセージの前処理で言い換えを再有効化する。
     # _FORMAT + "rephrase": instructions.RephraseChecker,
     _FORMAT + "json_format": instructions.JsonFormat,
     _FORMAT + "title": instructions.TitleChecker,
-    # TODO(tianjianlu): Re-enable with specific prompts.
+    # TODO(tianjianlu): 特定のプロンプトで再有効化する。
     # _MULTITURN + "constrained_start": instructions.ConstrainedStartChecker,
     _COMBINATION + "two_responses": instructions.TwoResponsesChecker,
     _COMBINATION + "repeat_prompt": instructions.RepeatPromptThenAnswer,
@@ -79,7 +78,7 @@ INSTRUCTION_DICT = {
 INSTRUCTION_CONFLICTS = {
     _KEYWORD + "existence": {_KEYWORD + "existence"},
     _KEYWORD + "frequency": {_KEYWORD + "frequency"},
-    # TODO(jeffreyzhou): make a proper set of sentences to choose from
+    # TODO(jeffreyzhou): 選択するための適切な文のセットを作成する
     # _KEYWORD + "key_sentences": instructions.KeySentenceChecker,
     _KEYWORD + "forbidden_words": {_KEYWORD + "forbidden_words"},
     _KEYWORD + "letter_frequency": {_KEYWORD + "letter_frequency"},
@@ -109,7 +108,7 @@ INSTRUCTION_CONFLICTS = {
     _CONTENT + "number_placeholders": {_CONTENT + "number_placeholders"},
     _CONTENT + "postscript": {_CONTENT + "postscript"},
     _FORMAT + "number_bullet_lists": {_FORMAT + "number_bullet_lists"},
-    # TODO(jeffreyzhou): Pre-create paragraph or use prompt to replace
+    # TODO(jeffreyzhou): 段落を事前作成するか、プロンプトを使用して置き換える
     # _CONTENT + "rephrase_paragraph": instructions.RephraseParagraph,
     _FORMAT + "constrained_response": set(INSTRUCTION_DICT.keys()),
     _FORMAT
@@ -120,14 +119,14 @@ INSTRUCTION_CONFLICTS = {
         _LANGUAGE + "response_language",
         _FORMAT + "number_highlighted_sections",
     },
-    # TODO(tianjianlu): Re-enable rephrasing with preprocessing the message.
+    # TODO(tianjianlu): メッセージの前処理で言い換えを再有効化する。
     # _FORMAT + "rephrase": instructions.RephraseChecker,
     _FORMAT
     + "json_format": set(INSTRUCTION_DICT.keys()).difference(
         {_KEYWORD + "forbidden_words", _KEYWORD + "existence"}
     ),
     _FORMAT + "title": {_FORMAT + "title"},
-    # TODO(tianjianlu): Re-enable with specific prompts.
+    # TODO(tianjianlu): 特定のプロンプトで再有効化する。
     # _MULTITURN + "constrained_start": instructions.ConstrainedStartChecker,
     _COMBINATION
     + "two_responses": set(INSTRUCTION_DICT.keys()).difference({
@@ -159,15 +158,15 @@ INSTRUCTION_CONFLICTS = {
 
 
 def conflict_make(conflicts):
-  """Makes sure if A conflicts with B, B will conflict with A.
+  """AがBと競合する場合、BもAと競合することを保証します。
 
   Args:
-    conflicts: Dictionary of potential conflicts where key is instruction id
-      and value is set of instruction ids that it conflicts with.
+    conflicts: キーが指示idで、値が競合する指示idのセットである
+      潜在的な競合の辞書。
 
   Returns:
-    Revised version of the dictionary. All instructions conflict with
-    themselves. If A conflicts with B, B will conflict with A.
+    辞書の改訂版。すべての指示は自分自身と競合します。
+    AがBと競合する場合、BもAと競合します。
   """
   for key in conflicts:
     for k in conflicts[key]:

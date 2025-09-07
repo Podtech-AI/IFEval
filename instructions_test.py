@@ -1,19 +1,19 @@
 # coding=utf-8
 # Copyright 2025 The Google Research Authors.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Apache License, Version 2.0 ("License") の下でライセンスされています。
+# このライセンスに従う場合を除き、このファイルを使用することはできません。
+# ライセンスのコピーは以下で入手できます:
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# 適用法で要求されるか書面で同意されない限り、ソフトウェアは
+# 「現状有姿」ベースで配布され、明示または暗示を問わず、
+# いかなる保証または条件もありません。
+# ライセンスの下での権限と制限については、
+# ライセンスを参照してください。
 
-"""Tests for instructions.py."""
+"""instructions.pyのテスト。"""
 
 from absl.testing import absltest
 from absl.testing import parameterized
@@ -36,7 +36,7 @@ class InstructionsTest(parameterized.TestCase):
       ]
   )
   def test_response_language(self, response, language):
-    """Test on single language response."""
+    """単一言語レスポンスのテスト。"""
     instruction_id = 'language:response_language'
     instruction = instructions.ResponseLanguageChecker(instruction_id)
     instruction.build_description(language=language)
@@ -56,7 +56,7 @@ class InstructionsTest(parameterized.TestCase):
       ]
   )
   def test_response_multilanguage(self, response, language):
-    """Test on responses that contain multi-language tokens."""
+    """複数言語トークンを含むレスポンスのテスト。"""
     instruction_id = 'language:response_language'
     instruction = instructions.ResponseLanguageChecker(instruction_id)
     instruction.build_description(language=language)
@@ -87,7 +87,7 @@ class InstructionsTest(parameterized.TestCase):
       ]
   )
   def test_number_sentences(self, response, relation, num_sentences, expected):
-    """Test the number of sentences."""
+    """文の数のテスト。"""
     instruction_id = 'length_constraints:number_sentences'
     instruction = instructions.NumberOfSentences(instruction_id)
     instruction.build_description(relation=relation,
@@ -118,7 +118,7 @@ class InstructionsTest(parameterized.TestCase):
       ]
   )
   def test_number_placeholders(self, template, num_placeholders, expected):
-    """Test the number of placeholders."""
+    """プレースホルダーの数のテスト。"""
     instruction_id = 'detectable_content:number_placeholders'
     instruction = instructions.PlaceholderChecker(instruction_id)
     instruction.build_description(num_placeholders=num_placeholders)
@@ -180,7 +180,7 @@ class InstructionsTest(parameterized.TestCase):
       ]
   )
   def test_number_bullet_lists(self, template, num_bullets, expected):
-    """Test the number of bullets."""
+    """箇条書きの数のテスト。"""
     instruction_id = 'detectable_format:exact_number_bullet_points'
     instruction = instructions.BulletListChecker(instruction_id)
     instruction.build_description(num_bullets=num_bullets)
@@ -195,7 +195,7 @@ class InstructionsTest(parameterized.TestCase):
   the best that I can be."""
 
   def test_constrained_response(self):
-    """Test the constrained response checker."""
+    """制約付きレスポンスチェッカーのテスト。"""
     instruction_id = 'detectable_format:constrained_response'
     instruction = instructions.ConstrainedResponseChecker(instruction_id)
     instruction.build_description()
@@ -250,7 +250,7 @@ class InstructionsTest(parameterized.TestCase):
       ]
   )
   def test_number_highlights(self, response, min_num_highlights, expected):
-    """Test the minimum number of highlighted sections."""
+    """ハイライト部分の最小数のテスト。"""
     instruction_id = 'detectable_format:minimum_number_highlighted_sections'
     instruction = instructions.HighlightSectionChecker(instruction_id)
     instruction.build_description(num_highlights=min_num_highlights)
@@ -271,7 +271,7 @@ class InstructionsTest(parameterized.TestCase):
   [content of section 2]"""
 
   def test_section_checker(self):
-    """Test the number of sections."""
+    """セクション数のテスト。"""
     instruction_id = 'detectable_format:multiple_sections'
     instruction = instructions.SectionChecker(instruction_id)
     section_keyword = 'Section'
@@ -321,7 +321,7 @@ class InstructionsTest(parameterized.TestCase):
           ***"""
 
   def test_paragraph_checker(self):
-    """Test the number of sections."""
+    """パラグラフ数のテスト。"""
     instruction_id = 'length_constraint:number_paragraphs'
     instruction = instructions.ParagraphChecker(instruction_id)
     num_paragraphs = 3
@@ -369,8 +369,8 @@ class InstructionsTest(parameterized.TestCase):
 
   Do you have any other questions for me?"""
 
-  # Postscript does not have to start as a new line.
-  # Relaxed the constraint in cl/525253841.
+  # 追伸は新しい行で始まる必要はありません。
+  # cl/525253841で制約を緩和しました。
   POSTSCRIPT_TEST_MESSAGE_3 = """
   The radius of a unit circle is 1. However, I can give you a funny and wrong
   answer: the radius of a unit circle is 0. This is because a unit circle is a
@@ -389,7 +389,7 @@ class InstructionsTest(parameterized.TestCase):
   """
 
   def test_postscript_checker(self):
-    """Test the postscript checker."""
+    """追伸チェッカーのテスト。"""
     instruction_id = 'detectable_content:postscript'
     instruction = instructions.PostscriptChecker(instruction_id)
     postscript_start_keyword = instructions._POSTSCRIPT_MARKER[0]
@@ -443,7 +443,7 @@ class InstructionsTest(parameterized.TestCase):
   devices."""
 
   def test_constrained_start_checker(self):
-    """Test the constrained start checker."""
+    """制約付き開始チェッカーのテスト。"""
     instruction_id = 'multi-turn:constrained_start'
     instruction = instructions.ConstrainedStartChecker(instruction_id)
     start_keyword = 'My response is:'
@@ -478,7 +478,7 @@ class InstructionsTest(parameterized.TestCase):
   *At present,* there is heavy rainfall occurring."""
 
   def test_rephrase_checker(self):
-    """Test the rephrase checker."""
+    """言い換えチェッカーのテスト。"""
     instruction_id = 'detectable_format:rephrasing'
     instruction = instructions.RephraseChecker(instruction_id)
     instruction.build_description(
@@ -525,7 +525,7 @@ class InstructionsTest(parameterized.TestCase):
   KEYWORDS = ('romantic', 'river', 'Mona Lisa')
 
   def test_keyword_checker(self):
-    """Test the inclusion of keywords."""
+    """キーワードの包含のテスト。"""
     instruction_id = 'keywords:include_keywords'
     instruction = instructions.KeywordChecker(instruction_id)
 
@@ -552,7 +552,7 @@ class InstructionsTest(parameterized.TestCase):
   TEST_KEYWORD_FREQUENCY_KEYWORD_2 = 'KEYWORD'
 
   def test_keyword_frequency_checker(self):
-    """Test the frequency of keywords."""
+    """キーワードの頻度のテスト。"""
 
     instruction_id = 'keywords:keyword_frequency'
     instruction = instructions.KeywordFrequencyChecker(instruction_id)
@@ -592,7 +592,7 @@ class InstructionsTest(parameterized.TestCase):
   l4ngu4g3 b4s3d on pr3vious l3arning & d4t4."""
 
   def test_num_words_checker(self):
-    """Test the checker on the number of words."""
+    """単語数チェッカーのテスト。"""
     instruction_id = 'length_constraint:number_words'
     instruction = instructions.NumberOfWords(instruction_id)
 
@@ -673,7 +673,7 @@ class InstructionsTest(parameterized.TestCase):
   Haha, you go that right."""
 
   def test_paragraph_first_word(self):
-    """Test number of paragraphs and first word of nth paragraph."""
+    """パラグラフ数とn番目のパラグラフの最初の単語のテスト。"""
     instruction_id = 'length_constraints:nth_paragraph_first_word'
     instruction = instructions.ParagraphFirstWordCheck(instruction_id)
     tests = [
@@ -741,7 +741,7 @@ I love it too much. I'll just have to make sure to eat it in moderation.
                    'I like to eat candy.', 'Puppies are fun.'}
 
   def test_key_sentences(self):
-    """Test the inclusion of key sentences."""
+    """キー文の包含のテスト。"""
     instruction_id = 'keywords:key_sentences'
     instruction = instructions.KeySentenceChecker(instruction_id)
 
@@ -793,7 +793,7 @@ I love it too much. I'll just have to make sure to eat it in moderation.
   FORBIDDEN_WORDS_3 = ('GENE', 'TRANSFORM')
 
   def test_forbidden_words(self):
-    """Test the exclusion of key words."""
+    """禁止単語の除外のテスト。"""
     instruction_id = 'keywords:forbidden_words'
     instruction = instructions.ForbiddenWords(instruction_id)
 
@@ -872,7 +872,7 @@ I love it too much. I'll just have to make sure to eat it in moderation.
   """
 
   def test_rephrase_paragraph(self):
-    """Test the rephrasing of paragraph."""
+    """パラグラフの言い換えのテスト。"""
     instruction_id = 'detectable_content:rephrase_paragraph'
     instruction = instructions.RephraseParagraph(instruction_id)
     low, high = 20, 30
@@ -958,7 +958,7 @@ I love it too much. I'll just have to make sure to eat it in moderation.
   """
 
   def test_two_responses(self):
-    """Test that two responses are given."""
+    """二つのレスポンスが与えられることのテスト。"""
     instruction_id = 'combination:two_responses'
     instruction = instructions.TwoResponsesChecker(instruction_id)
     instruction.build_description()
@@ -989,7 +989,7 @@ I love it too much. I'll just have to make sure to eat it in moderation.
   """
 
   def test_prompt_repeat_answer(self):
-    """Test that prompt is repeated then anwered."""
+    """プロンプトが繰り返された後に回答されることのテスト。"""
     instruction_id = 'combination:repeat_prompt'
     instruction = instructions.RepeatPromptThenAnswer(instruction_id)
 
@@ -1027,7 +1027,7 @@ I love it too much. I'll just have to make sure to eat it in moderation.
   """
 
   def test_end_checker(self):
-    """Check the end of the prompt."""
+    """プロンプトの終了チェック。"""
     instruction_id = 'startend:end_checker'
     instruction = instructions.EndChecker(instruction_id)
     instruction.build_description(end_phrase=self.END_PHRASE_1)
@@ -1062,7 +1062,7 @@ I love it too much. I'll just have to make sure to eat it in moderation.
   """
 
   def test_title_checker(self):
-    """Check the prompt for a title."""
+    """プロンプトのタイトルチェック。"""
     instruction_id = 'detectable_format:title'
     instruction = instructions.TitleChecker(instruction_id)
     instruction.build_description()
@@ -1089,7 +1089,7 @@ I love it too much. I'll just have to make sure to eat it in moderation.
     """
 
   def test_letter_frequency_checker(self):
-    """Test the frequency of letters."""
+    """文字の頻度のテスト。"""
     instruction_id = 'keywords:letter_frequency'
     instruction = instructions.LetterFrequencyChecker(instruction_id)
 
@@ -1138,7 +1138,7 @@ I love it too much. I'll just have to make sure to eat it in moderation.
   """
 
   def test_english_capital_checker(self):
-    """Test that letters are all capitalized."""
+    """すべての文字が大文字であることのテスト。"""
     instruction_id = 'change_case:english_capital'
     instruction = instructions.CapitalLettersEnglishChecker(instruction_id)
     instruction.build_description()
@@ -1157,7 +1157,7 @@ I love it too much. I'll just have to make sure to eat it in moderation.
   """
 
   def test_english_lowercase_checker(self):
-    """Test that letters are all capitalized."""
+    """すべての文字が小文字であることのテスト。"""
     instruction_id = 'change_case:english_lowercase'
     instruction = instructions.LowercaseLettersEnglishChecker(instruction_id)
     instruction.build_description()
@@ -1274,12 +1274,12 @@ I love it too much. I'll just have to make sure to eat it in moderation.
   }
 
   def test_get_instruction_args(self):
-    """Test getting instruction args."""
+    """インストラクション引数の取得のテスト。"""
     for inst_id, inst_cls in self.INSTRUCTION_DICT.items():
       instruction = inst_cls(inst_id)
       inst_description = instruction.build_description()
       kwargs = instruction.get_instruction_args()
-      # The keyword args can be None.
+      # キーワード引数はNoneでも構いません。
       if kwargs:
         inst_description_closed_loop = instruction.build_description(**kwargs)
         with self.subTest(f'test {inst_id}'):
