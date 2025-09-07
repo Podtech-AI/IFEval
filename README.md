@@ -28,7 +28,10 @@ python3 -m instruction_following_eval.evaluation_main   --input_data=instruction
 ```
 
 
-```以下のデータはサンプルデータから削除
+```
+
+以下のデータはサンプルデータから削除
+
 // {"key": 2785, "prompt": "What is inside Shinto shrines? Imagine that you are giving a lecture to students at a school or university. Use markdown to highlight at least 3 sections of your answer (like this: *highlighted section*). Your answer must also contain at least 3 placeholders (an example of a placeholder is [address]).", "instruction_id_list": ["detectable_format:number_highlighted_sections", "detectable_content:number_placeholders"], "kwargs": [{"num_highlights": 3}, {"num_placeholders": 3}]}
 ```
 
