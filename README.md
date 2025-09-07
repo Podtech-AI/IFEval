@@ -1,3 +1,8 @@
+# これは、IFEval: Instruction Following Evalをクローンして修正したリポジトリです。
+
+https://github.com/google-research/google-research/tree/master/instruction_following_eval
+
+
 # IFEval: Instruction Following Eval
 
 This is not an officially supported Google product.
