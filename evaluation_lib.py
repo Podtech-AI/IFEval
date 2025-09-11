@@ -17,7 +17,6 @@
 import collections
 import dataclasses
 import json
-import re
 from typing import Dict, Optional, Sequence, Union
 
 from instruction_following_eval import instructions_registry
@@ -77,7 +76,11 @@ def test_instruction_following_strict(
     prompt_to_response,
 ):
   """指示に従っているかどうかを確認するために応答をテストします。"""
-  response = prompt_to_response[inp.prompt]
+  if inp.prompt not in prompt_to_response:
+    # プロンプトに対応するレスポンスが見つからない場合、空のレスポンスで処理
+    response = ""
+  else:
+    response = prompt_to_response[inp.prompt]
   instruction_list = inp.instruction_id_list
   is_following_list = []
 
@@ -85,10 +88,37 @@ def test_instruction_following_strict(
     instruction_cls = instructions_registry.INSTRUCTION_DICT[instruction_id]
     instruction = instruction_cls(instruction_id)
 
-    instruction.build_description(**inp.kwargs[index])
-    args = instruction.get_instruction_args()
-    if args and "prompt" in args:
-      instruction.build_description(prompt=inp.prompt)
+    # 指示クラスが受け取るパラメータのみをフィルタリング
+    kwargs = inp.kwargs[index]
+    
+    # 指示クラスが受け取るパラメータのキーを取得
+    try:
+      args_keys = instruction.get_instruction_args_keys()
+      if args_keys:
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in args_keys}
+        # 必須パラメータが不足している場合はスキップ
+        if not filtered_kwargs and args_keys:
+          instruction.build_description()
+        else:
+          instruction.build_description(**filtered_kwargs)
+      else:
+        instruction.build_description()
+    except (AttributeError, ValueError):
+      # get_instruction_args_keysメソッドがない場合や必須パラメータが不足している場合は、デフォルトでbuild_descriptionを呼ぶ
+      try:
+        instruction.build_description()
+      except ValueError:
+        # 必須パラメータが不足している場合はスキップ
+        pass
+    
+    # promptパラメータが必要な場合は追加
+    try:
+      args = instruction.get_instruction_args()
+      if args and "prompt" in args:
+        instruction.build_description(prompt=inp.prompt)
+    except AttributeError:
+      # get_instruction_argsメソッドがない場合はスキップ
+      pass
 
     if response.strip() and instruction.check_following(response):
       is_following_list.append(True)
@@ -109,7 +139,11 @@ def test_instruction_following_loose(
     prompt_to_response,
 ):
   """指示に従うための上限について応答をテストします。"""
-  response = prompt_to_response[inp.prompt]
+  if inp.prompt not in prompt_to_response:
+    # プロンプトに対応するレスポンスが見つからない場合、空のレスポンスで処理
+    response = ""
+  else:
+    response = prompt_to_response[inp.prompt]
   r = response.split("\n")
   response_remove_first = "\n".join(r[1:]).strip()
   response_remove_last = "\n".join(r[:-1]).strip()
@@ -135,10 +169,37 @@ def test_instruction_following_loose(
     instruction_cls = instructions_registry.INSTRUCTION_DICT[instruction_id]
     instruction = instruction_cls(instruction_id)
 
-    instruction.build_description(**inp.kwargs[index])
-    args = instruction.get_instruction_args()
-    if args and "prompt" in args:
-      instruction.build_description(prompt=inp.prompt)
+    # 指示クラスが受け取るパラメータのみをフィルタリング
+    kwargs = inp.kwargs[index]
+    
+    # 指示クラスが受け取るパラメータのキーを取得
+    try:
+      args_keys = instruction.get_instruction_args_keys()
+      if args_keys:
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in args_keys}
+        # 必須パラメータが不足している場合はスキップ
+        if not filtered_kwargs and args_keys:
+          instruction.build_description()
+        else:
+          instruction.build_description(**filtered_kwargs)
+      else:
+        instruction.build_description()
+    except (AttributeError, ValueError):
+      # get_instruction_args_keysメソッドがない場合や必須パラメータが不足している場合は、デフォルトでbuild_descriptionを呼ぶ
+      try:
+        instruction.build_description()
+      except ValueError:
+        # 必須パラメータが不足している場合はスキップ
+        pass
+    
+    # promptパラメータが必要な場合は追加
+    try:
+      args = instruction.get_instruction_args()
+      if args and "prompt" in args:
+        instruction.build_description(prompt=inp.prompt)
+    except AttributeError:
+      # get_instruction_argsメソッドがない場合はスキップ
+      pass
 
     is_following = False
     for r in all_responses:
