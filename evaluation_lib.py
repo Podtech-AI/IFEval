@@ -17,28 +17,9 @@
 import collections
 import dataclasses
 import json
-import os
 from typing import Dict, Optional, Sequence, Union
 
 from instruction_following_eval import instructions_registry
-
-try:
-    import openai
-    OPENAI_AVAILABLE = True
-except ImportError:
-    OPENAI_AVAILABLE = False
-
-try:
-    import anthropic
-    ANTHROPIC_AVAILABLE = True
-except ImportError:
-    ANTHROPIC_AVAILABLE = False
-
-try:
-    import google.generativeai as genai
-    GOOGLE_AI_AVAILABLE = True
-except ImportError:
-    GOOGLE_AI_AVAILABLE = False
 
 @dataclasses.dataclass
 class InputExample:
@@ -404,8 +385,8 @@ def print_report(outputs):
       if followed_or_not:
         tier1_correct[instruction_id] += 1
 
-  print(f"prompt-level: {prompt_correct / prompt_total}")
-  print(f"instruction-level: {instruction_correct / instruction_total}")
+  print(f"プロンプトレベル精度: {prompt_correct / prompt_total}")
+  print(f"指示レベル精度: {instruction_correct / instruction_total}")
   print()
   for instruction_id in sorted(tier0_total.keys()):
     accuracy = tier0_correct[instruction_id] / tier0_total[instruction_id]
