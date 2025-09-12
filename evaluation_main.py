@@ -23,6 +23,8 @@ from absl import logging
 
 from instruction_following_eval import evaluation_lib
 
+import nltk
+nltk.download('punkt_tab')
 
 _INPUT_DATA = flags.DEFINE_string(
     "input_data", None, "入力データへのパス", required=True

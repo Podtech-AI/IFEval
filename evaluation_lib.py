@@ -21,7 +21,6 @@ from typing import Dict, Optional, Sequence, Union
 
 from instruction_following_eval import instructions_registry
 
-
 @dataclasses.dataclass
 class InputExample:
   key: int
