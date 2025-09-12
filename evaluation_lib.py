@@ -17,9 +17,28 @@
 import collections
 import dataclasses
 import json
+import os
 from typing import Dict, Optional, Sequence, Union
 
 from instruction_following_eval import instructions_registry
+
+try:
+    import openai
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
+
+try:
+    import anthropic
+    ANTHROPIC_AVAILABLE = True
+except ImportError:
+    ANTHROPIC_AVAILABLE = False
+
+try:
+    import google.generativeai as genai
+    GOOGLE_AI_AVAILABLE = True
+except ImportError:
+    GOOGLE_AI_AVAILABLE = False
 
 @dataclasses.dataclass
 class InputExample:
@@ -225,6 +244,124 @@ def read_prompt_to_response_dict(input_jsonl_filename):
       example = json.loads(l)
       return_dict[example["prompt"]] = example["response"]
   return return_dict
+
+
+def generate_gpt_response(prompt: str, model: str = "gpt-3.5-turbo", api_key: Optional[str] = None) -> str:
+  """GPTモデルを使用してプロンプトに対する応答を生成します。"""
+  if not OPENAI_AVAILABLE:
+    raise ImportError("OpenAIライブラリがインストールされていません。pip install openai を実行してください。")
+  
+  if api_key is None:
+    api_key = os.getenv("OPENAI_API_KEY")
+    if api_key is None:
+      raise ValueError("OpenAI APIキーが設定されていません。環境変数OPENAI_API_KEYを設定するか、api_keyパラメータを指定してください。")
+  
+  client = openai.OpenAI(api_key=api_key)
+  
+  try:
+    response = client.chat.completions.create(
+      model=model,
+      messages=[
+        {"role": "user", "content": prompt}
+      ],
+      max_tokens=2000,
+      temperature=0.7
+    )
+    return response.choices[0].message.content
+  except Exception as e:
+    raise RuntimeError(f"GPT API呼び出し中にエラーが発生しました: {e}")
+
+
+def generate_claude_response(prompt: str, model: str = "claude-3-haiku-20240307", api_key: Optional[str] = None) -> str:
+  """Claude モデルを使用してプロンプトに対する応答を生成します。"""
+  if not ANTHROPIC_AVAILABLE:
+    raise ImportError("anthropicライブラリがインストールされていません。pip install anthropic を実行してください。")
+  
+  if api_key is None:
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if api_key is None:
+      raise ValueError("Anthropic APIキーが設定されていません。環境変数ANTHROPIC_API_KEYを設定するか、api_keyパラメータを指定してください。")
+  
+  client = anthropic.Anthropic(api_key=api_key)
+  
+  try:
+    response = client.messages.create(
+      model=model,
+      max_tokens=2000,
+      messages=[
+        {"role": "user", "content": prompt}
+      ]
+    )
+    return response.content[0].text
+  except Exception as e:
+    raise RuntimeError(f"Claude API呼び出し中にエラーが発生しました: {e}")
+
+
+def generate_gemini_response(prompt: str, model: str = "gemini-pro", api_key: Optional[str] = None) -> str:
+  """Gemini モデルを使用してプロンプトに対する応答を生成します。"""
+  if not GOOGLE_AI_AVAILABLE:
+    raise ImportError("google-generativeaiライブラリがインストールされていません。pip install google-generativeai を実行してください。")
+  
+  if api_key is None:
+    api_key = os.getenv("GOOGLE_AI_API_KEY")
+    if api_key is None:
+      raise ValueError("Google AI APIキーが設定されていません。環境変数GOOGLE_AI_API_KEYを設定するか、api_keyパラメータを指定してください。")
+  
+  genai.configure(api_key=api_key)
+  
+  try:
+    model_instance = genai.GenerativeModel(model)
+    response = model_instance.generate_content(prompt)
+    return response.text
+  except Exception as e:
+    raise RuntimeError(f"Gemini API呼び出し中にエラーが発生しました: {e}")
+
+
+def generate_response(prompt: str, provider: str = "openai", model: str = None, api_key: Optional[str] = None) -> str:
+  """指定されたプロバイダーとモデルを使用してプロンプトに対する応答を生成します。"""
+  if provider == "openai":
+    model = model or "gpt-3.5-turbo"
+    return generate_gpt_response(prompt, model, api_key)
+  elif provider == "anthropic":
+    model = model or "claude-3-haiku-20240307"
+    return generate_claude_response(prompt, model, api_key)
+  elif provider == "google":
+    model = model or "gemini-pro"
+    return generate_gemini_response(prompt, model, api_key)
+  else:
+    raise ValueError(f"サポートされていないプロバイダーです: {provider}. サポートされているプロバイダー: openai, anthropic, google")
+
+
+def generate_responses_with_gpt(inputs: Sequence[InputExample], model: str = "gpt-3.5-turbo", api_key: Optional[str] = None) -> Dict[str, str]:
+  """入力プロンプトのリストに対してGPTモデルを使用して応答を生成します。"""
+  prompt_to_response = {}
+  
+  for i, inp in enumerate(inputs):
+    print(f"プロンプト {i+1}/{len(inputs)} を処理中...")
+    try:
+      response = generate_gpt_response(inp.prompt, model, api_key)
+      prompt_to_response[inp.prompt] = response
+    except Exception as e:
+      print(f"プロンプト {i+1} の処理中にエラーが発生しました: {e}")
+      prompt_to_response[inp.prompt] = ""
+  
+  return prompt_to_response
+
+
+def generate_responses(inputs: Sequence[InputExample], provider: str = "openai", model: str = None, api_key: Optional[str] = None) -> Dict[str, str]:
+  """入力プロンプトのリストに対して指定されたプロバイダーのモデルを使用して応答を生成します。"""
+  prompt_to_response = {}
+  
+  for i, inp in enumerate(inputs):
+    print(f"プロンプト {i+1}/{len(inputs)} を処理中...")
+    try:
+      response = generate_response(inp.prompt, provider, model, api_key)
+      prompt_to_response[inp.prompt] = response
+    except Exception as e:
+      print(f"プロンプト {i+1} の処理中にエラーが発生しました: {e}")
+      prompt_to_response[inp.prompt] = ""
+  
+  return prompt_to_response
 
 
 def print_report(outputs):

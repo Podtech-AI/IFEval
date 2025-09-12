@@ -20,6 +20,8 @@ pip3 install -r requirements.txt
 
 ## How to run
 
+### 既存の応答データを使用する場合
+
 You need to create a jsonl file with two entries: prompt and response.
 Then, call `evaluation_main` from the parent folder of
 instruction_following_eval. For example:
@@ -31,6 +33,43 @@ instruction_following_eval. For example:
 # ...
 python3 -m instruction_following_eval.evaluation_main   --input_data=instruction_following_eval/data/input_data.jsonl   --input_response_data=instruction_following_eval/data/input_response_data_gpt4_20231107_145030.jsonl   --output_dir=instruction_following_eval/data/test_output
 ```
+
+### GPTモデルを使用して応答を生成する場合
+
+OpenAI APIを使用してGPTモデルで応答を生成し、評価を行うことができます：
+
+```bash
+# 環境変数でAPIキーを設定
+export OPENAI_API_KEY="your-api-key-here"
+
+# GPT-3.5-turboを使用
+python3 -m instruction_following_eval.evaluation_main \
+  --input_data=instruction_following_eval/data/input_data.jsonl \
+  --use_gpt=True \
+  --gpt_model=gpt-3.5-turbo \
+  --output_dir=instruction_following_eval/data/test_output
+
+# GPT-4を使用
+python3 -m instruction_following_eval.evaluation_main \
+  --input_data=instruction_following_eval/data/input_data.jsonl \
+  --use_gpt=True \
+  --gpt_model=gpt-4 \
+  --output_dir=instruction_following_eval/data/test_output
+
+# コマンドライン引数でAPIキーを指定
+python3 -m instruction_following_eval.evaluation_main \
+  --input_data=instruction_following_eval/data/input_data.jsonl \
+  --use_gpt=True \
+  --gpt_model=gpt-4-turbo \
+  --openai_api_key="your-api-key-here" \
+  --output_dir=instruction_following_eval/data/test_output
+```
+
+#### 利用可能なGPTモデル
+- `gpt-3.5-turbo` (デフォルト)
+- `gpt-4`
+- `gpt-4-turbo`
+- その他OpenAI APIで利用可能なモデル
 
 
 ```
